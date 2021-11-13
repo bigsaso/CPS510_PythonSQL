@@ -7,4 +7,9 @@ INSERT INTO try VALUES ('name')
 """
 
 cursor.execute(sql_alter)
+connect.connection.commit()
 print('Table Altered.')
+
+#Closing cursor and connection
+cursor.close()
+connect.connection.close()
