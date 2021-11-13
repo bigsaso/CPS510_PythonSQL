@@ -10,3 +10,7 @@ CREATE TABLE try(
 
 cursor.execute(sql_create)
 print('Table Created.')
+
+#Closing cursor and connection
+cursor.close()
+connect.connection.close()
