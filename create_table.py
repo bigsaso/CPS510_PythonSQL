@@ -1,16 +1,18 @@
-import connect
-import cx_Oracle
+#import connect
+import MainWin
+#import cx_Oracle
 
-cursor = connect.connection.cursor()
-sql_create = """
-CREATE TABLE try(
-    name varchar2(50)
-)
-"""
+#cursor = connect.connection.cursor()
+sql_create = MainWin.input.get()
+#sql_create = """
+#CREATE TABLE try(
+#    name varchar2(50)
+#)
+#"""
 
-cursor.execute(sql_create)
+MainWin.cursor.execute(sql_create)
 print('Table Created.')
 
 #Closing cursor and connection
-cursor.close()
-connect.connection.close()
+#cursor.close()
+#connect.connection.close()

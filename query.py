@@ -1,18 +1,15 @@
-import connect
-import cx_Oracle
+#import connect
+import MainWin
+#import cx_Oracle
 
-cursor = connect.connection.cursor()
-query = """
-SELECT ROLE, COUNT(USER_ID) AS COUNT
-    FROM usertb
-    GROUP BY ROLE
-"""
+#cursor = connect.connection.cursor()
+query = MainWin.input.get()
 
-cursor.execute(query)
-row = cursor.fetchall()
+MainWin.cursor.execute(query)
+row = MainWin.cursor.fetchall()
 print(row)
 print('Query Executed.')
 
 #Closing cursor and connection
-cursor.close()
-connect.connection.close()
+#cursor.close()
+#connect.connection.close()

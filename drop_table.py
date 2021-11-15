@@ -1,14 +1,16 @@
-import connect
-import cx_Oracle
+#import connect
+import MainWin
+#import cx_Oracle
 
-cursor = connect.connection.cursor()
-sql_drop = """
-DROP TABLE try
-"""
+#cursor = connect.connection.cursor()
+sql_drop = MainWin.input.get()
+#sql_drop = """
+#DROP TABLE try
+#"""
 
-cursor.execute(sql_drop)
+MainWin.cursor.execute(sql_drop)
 print('Table Dropped.')
 
 #Closing cursor and connection
-cursor.close()
-connect.connection.close()
+#cursor.close()
+#connect.connection.close()
