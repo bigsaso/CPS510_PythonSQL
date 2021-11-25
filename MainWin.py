@@ -1,10 +1,10 @@
 from tkinter import *
-#import connect
 import cx_Oracle
 import MainWin
 
 root = Tk()
-root.geometry("500x500")
+root.title('SQL GUI')
+root.geometry("570x310")
 
 #Creating window frames
 login = Frame(root)
@@ -34,23 +34,34 @@ def create_connection():
 
 #Creating the function for when query_button is clicked:
 def query_click():
-    #Execute query.py
-    exec(open('query.py').read())
+    query = input.get()
+    cursor.execute(query)
+    row = cursor.fetchall()
+    result = Text(mainwindow, height=10)
+    result.grid(row=6, column=0)
+    result.insert(END, row)
 
 #Creating the function for when insert_button is clicked:
 def insert_click():
-    #Execute query.py
-    exec(open('create_table.py').read())
+    sql_create = input.get()
+    cursor.execute(sql_create)
+    created = Label(mainwindow, text='Table Created')
+    created.grid(row=6, column=0)
 
 #Creating the function for when drop_button is clicked:
 def drop_click():
-    #Execute query.py
-    exec(open('drop_table.py').read())
+    sql_drop = MainWin.input.get()
+    cursor.execute(sql_drop)
+    deleted = Label(mainwindow, text='Table Dropped')
+    deleted.grid(row=6, column=0)
 
 #Creating the function for when alter_button is clicked:
 def alter_click():
-    #Execute query.py
-    exec(open('alter_table.py').read())
+    sql_alter = MainWin.input.get()
+    cursor.execute(sql_alter)
+    connection.commit()
+    altered = Label(mainwindow, text='Table Altered')
+    altered.grid(row=6, column=0)
 
 #Creating the function for when exit_button is clicked:
 def exit_click():
@@ -64,23 +75,27 @@ def exit_click():
 
 #Creating the GUI items for login
 welcome = Label(login, text='Welcome to DBMS Python App. Please enter your username and password below')
-user = Entry(login, width=50)
-pwd = Entry(login, show='*', width=50)
+user_text = Label(login, text='Username')
+pass_text = Label(login, text='Password')
+user = Entry(login, width=20)
+pwd = Entry(login, show='*', width=20)
 login_button = Button(login, text='Login', command=create_connection)
 
 #Creating the GUI items for main window
 input = Entry(mainwindow, width=50)
 query_button = Button(mainwindow, text='Query', command=query_click) #This button's function is defined by command query_click
-insert_button = Button(mainwindow, text='Insert Table', command=insert_click) #This button's function is defined by command insert_click
+insert_button = Button(mainwindow, text='Create Table', command=insert_click) #This button's function is defined by command insert_click
 drop_button = Button(mainwindow, text='Drop Table', command=drop_click) #This button's function is defined by command drop_click
 alter_button = Button(mainwindow, text='Alter Table', command=alter_click) #This button's function is defined by command alter_click
 exit_button = Button(mainwindow, text='Exit', command=exit_click) #This button's function is defined by command exit_click
 
 #Creating the layout for login
-welcome.grid(row=0, column=0)
-user.grid(row=1, column=0)
-pwd.grid(row=2, column=0)
-login_button.grid(row=3, column=0)
+welcome.pack()
+user_text.pack(pady=5)
+user.pack(padx=5)
+pass_text.pack(pady=5)
+pwd.pack(padx=5)
+login_button.pack(pady=5)
 
 #Creating the layout for main window
 input.grid(row=0,column=0)
