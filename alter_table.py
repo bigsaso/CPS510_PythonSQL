@@ -1,4 +1,3 @@
-import connect
 import MainWin
 #import cx_Oracle
 
@@ -9,7 +8,7 @@ sql_alter = MainWin.input.get()
 #"""
 
 MainWin.cursor.execute(sql_alter)
-connect.connection.commit()
+MainWin.connection.commit()
 print('Table Altered.')
 
 #Closing cursor and connection
