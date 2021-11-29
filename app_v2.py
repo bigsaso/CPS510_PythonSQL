@@ -9,7 +9,7 @@ root.geometry("570x310")
 
 OPTIONS = [
 "Usertb","Usercred", "Team", "League", "Match", "Standings",
-"Table_Name", "Goalkeeper", "Defender", "Midfielder", "Striker", "Lineup"
+"Goalkeeper", "Defender", "Midfielder", "Striker", "Lineup"
 ]
 
 #Creating window frames
