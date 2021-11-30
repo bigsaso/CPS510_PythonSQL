@@ -7,10 +7,11 @@ root = Tk()
 root.title('Fantasy Soccer DBMS GUI')
 root.geometry("570x310")
 
-OPTIONS = [
-"Usertb","Usercred", "Team", "League", "Match", "Standings",
-"Goalkeeper", "Defender", "Midfielder", "Striker", "Lineup"
-]
+OPTIONS = [""]
+# #[
+# "Usertb","Usercred", "Team", "League", "Match", "Standings",
+# "Goalkeeper", "Defender", "Midfielder", "Striker", "Lineup"
+#]
 
 #Creating window frames
 login = Frame(root)
@@ -25,7 +26,7 @@ def frameraise(frame):
     frame.tkraise()
 
 #Creating function to manage frames
-for frame in (login, mainwindow, query_page, create_page, alter_page, drop_page):
+for frame in (login, mainwindow, query_page, alter_page, drop_page):
     frame.grid(row=0, column=0, sticky='news')
 
 #Create function to manage login
@@ -45,6 +46,12 @@ def create_connection():
             cursor = connection.cursor()
             frameraise(mainwindow)
             result.config(width = 60, height = 5)
+            cursor.execute("select table_name from user_tables order by table_name")
+            optionList = cursor.fetchall()        
+            for string in optionList:
+                OPTIONS.append(string)
+            OPTIONS.remove("")
+            updateMenu()
     except:
         #Login information was incorrect, exception was thrown, prompt user again
         ins["text"] = "Invalid username/password. Please Try Again"   
@@ -69,55 +76,35 @@ def query_click():
 
 #Creating the function for when insert_button is clicked:
 def insert_click():
-    sql_create = input.get()
-
-    #Enables result Text to be editted
-    result.config(state = NORMAL)
+    sql_create = 'CREATE TABLE TRY (Name VARCHAR2(50), Age INT)'
 
     #Clears result Text if it isn't empty
     if result.get('1.0',END) != '':
             result.delete('1.0', END)
 
     try: 
-        #Checks if entry is a create table command, else throws exception
-        if input.get().lower().find('create') == -1:
-            raise ValueError
-
         #Attempts to carry out input command, otherwise throw exception
         cursor.execute(sql_create)
 
         #Inform user Table was successfully created
-        result.insert(END, "Table Created")
-    except ValueError:
-        result.insert(END, "Please enter a create table command")
+        updateLabel['text'] = "Table Created"
+        OPTIONS.append("TRY")
+        updateMenu()
     except:
-        result.insert(END, "Creation command is incorrect or this table already exists")
-    result.config(state = DISABLED)
+        updateLabel['text'] = "Table already exists"
 
 #Creating the function for when drop_button is clicked:
 def drop_click():
-    sql_drop = app_v2.input.get()
-    
-    #Enables result Text to be editted
-    result.config(state = NORMAL)
-
-    #Clears result Text if it isn't empty
-    if result.get('1.0',END) != '':
-            result.delete('1.0', END)
+    sql_drop = "DROP TABLE TRY"
 
     try: 
-        #Checks if entry is a drop command, else throws exception
-        if input.get().lower().find('drop') == -1:
-            raise ValueError
-
         #Attempts to carry out input command, otherwise throw exception
         cursor.execute(sql_drop)
-        result.insert(END, 'Table Dropped')
-    except ValueError:
-        result.insert(END, "Please enter a drop command")
+        updateLabel['text'] ='Table Dropped'
+        OPTIONS.remove("TRY")
+        updateMenu()
     except:
-        result.insert(END, "Drop command is incorrect or this table does not exist")
-    result.config(state = DISABLED)
+        updateLabel['text'] = "Table does not exist"
 
 #Creating the function for when alter_button is clicked:
 def alter_click():
@@ -164,6 +151,14 @@ def on_entry_click(event):
     if input.get() == "Enter your command...":
         input.delete(0 , 'end')
 
+def updateMenu ():
+    tables_ddown["menu"].delete(0, "end")
+    for string in OPTIONS:
+        tables_ddown["menu"].add_command(label = string, command = tk._setit(table,string))
+    
+    table.set(OPTIONS[0]) # default value
+        
+
 #Changes the behaviour of the [x] button to run close_window when clicked (previously, clicking [x] button made another instance open)
 root.protocol("WM_DELETE_WINDOW", close_window)
 
@@ -192,9 +187,11 @@ login_button = Button(login, text='Login', command=create_connection)
 #input.insert(0, "Enter your command...")
 #input.bind('<FocusIn>', on_entry_click)
 to_query = Button(mainwindow, text='Go to Query page', width=30, command=lambda : frameraise(query_page))
-to_create = Button(mainwindow, text='Go to Create Table page', width=30, command=lambda : frameraise(create_page))
+to_create = Button(mainwindow, text='Go to Create Table page', width=30, command=insert_click)
 to_alter = Button(mainwindow, text='Go to Alter Table page', width=30, command=lambda : frameraise(alter_page))
-to_drop = Button(mainwindow, text='Go to Drop Table page', width=30, command=lambda : frameraise(drop_page))
+to_drop = Button(mainwindow, text='Go to Drop Table page', width=30, command=drop_click)
+introLabel = Label (mainwindow, text ="Welcome to the Fantasy Soccer DBMS")
+updateLabel = Label (mainwindow, text = "Please select an option")
 #query_button1 = Button(mainwindow, text='Query', width = 30, command=query_click2) #This button's function is defined by command query_click
 #insert_button = Button(mainwindow, text='Create Table',width = 30, command=insert_click) #This button's function is defined by command insert_click
 #drop_button = Button(mainwindow, text='Drop Table',width = 30, command=drop_click) #This button's function is defined by command drop_click
@@ -207,8 +204,8 @@ back_button = Button(query_page, text='Back', width=30, command=lambda : framera
 query_button = Button(query_page, text='Query', width = 30, command=query_click) #This button's function is defined by command query_click
 result = Text(query_page, wrap= WORD, height =0, width = 0, state = DISABLED)
 table = StringVar(query_page)
-table.set(OPTIONS[0]) # default value
 tables_ddown = OptionMenu(query_page, table, *OPTIONS)
+
 
 #Creating the GUI for create table page
 back_button1 = Button(create_page, text='Back', width=30, command=lambda : frameraise(mainwindow))
@@ -249,6 +246,8 @@ mainwindow.columnconfigure(0, weight = 1, minsize= 570)
 #result1.grid(row =0, column = 0, padx = 5, pady = 5, sticky = "n")
 #input.grid(row=1,column=0, padx=5, pady=5, sticky="ns")
 #query_button1.grid(row=7, column=0, padx=5, pady=5, sticky="ns")
+introLabel.grid(row = 0, column = 0, pady=5, padx=5, sticky="ns")
+updateLabel.grid(row = 1, column = 0, pady=5, padx=5, sticky="ns")
 to_query.grid(row=2, column=0, padx=5, pady=5, sticky="ns")
 to_create.grid(row=3, column=0, padx=5, pady=5, sticky="ns")
 to_alter.grid(row=4, column=0, padx=5, pady=5, sticky="ns")
