@@ -62,7 +62,11 @@ def create_connection():
     
 #Creating the function for when query_button is clicked:
 def query_click():
-    query = 'select * from ' + table.get()
+    translated_query = table.get().translate({ord("'"): None, ord(','): None, ord('('): None, ord(')'): None})
+    #print(table.get().translate({ord("'"): None, ord(','): None, ord('('): None, ord(')'): None}))
+    ##Debugging noticed that table.get() gave string "('DEFENDER',)", so we used translate function to remove
+    ##extra characters since the query only wants "DEFENDER".
+    query = 'select * from ' + translated_query
     result.config(state = NORMAL)
     if result.get('1.0',END) != '':
         result.delete('1.0', END)
@@ -187,9 +191,9 @@ login_button = Button(login, text='Login', command=create_connection)
 #input.insert(0, "Enter your command...")
 #input.bind('<FocusIn>', on_entry_click)
 to_query = Button(mainwindow, text='Go to Query page', width=30, command=lambda : frameraise(query_page))
-to_create = Button(mainwindow, text='Go to Create Table page', width=30, command=insert_click)
+to_create = Button(mainwindow, text='Create Table', width=30, command=insert_click)
 to_alter = Button(mainwindow, text='Go to Alter Table page', width=30, command=lambda : frameraise(alter_page))
-to_drop = Button(mainwindow, text='Go to Drop Table page', width=30, command=drop_click)
+to_drop = Button(mainwindow, text='Drop Table', width=30, command=drop_click)
 introLabel = Label (mainwindow, text ="Welcome to the Fantasy Soccer DBMS")
 updateLabel = Label (mainwindow, text = "Please select an option")
 #query_button1 = Button(mainwindow, text='Query', width = 30, command=query_click2) #This button's function is defined by command query_click
