@@ -125,7 +125,7 @@ def alter_click():
 
     #Clears result Text if it isn't empty
     for str in values:
-        sql_alter = "INSERT INTO " + buffer[2:-3] + " (Name, Age) VALUES " + str
+        sql_alter = "INSERT INTO " + buffer + "(Name, Age) VALUES " + str
         
         try: 
             # #Checks if entry is a alter/insert command, else throws exception
