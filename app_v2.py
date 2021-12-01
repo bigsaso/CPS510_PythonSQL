@@ -46,6 +46,7 @@ def create_connection():
             cursor = connection.cursor()
             frameraise(mainwindow)
             result.config(width = 60, height = 5)
+            result2.config(width = 60, height = 5)
             cursor.execute("select table_name from user_tables order by table_name")
             optionList = cursor.fetchall()        
             for string in optionList:
@@ -112,28 +113,34 @@ def drop_click():
 
 #Creating the function for when alter_button is clicked:
 def alter_click():
-    sql_alter = app_v2.input.get()
+    buffer = targetTable.get()
+    values = ["('Joseph', 1)", "('Salvatore', 3)", "('Eddy', 3)", "('Ghost', 7)"]
+    
+    
     #Enables result Text to be editted
-    result.config(state = NORMAL)
+    result2.config(state = NORMAL)
+
+    if result2.get('1.0',END) != '':
+                result2.delete('1.0', END)
 
     #Clears result Text if it isn't empty
-    if result.get('1.0',END) != '':
-            result.delete('1.0', END)
+    for str in values:
+        sql_alter = "INSERT INTO " + buffer[2:-3] + " (Name, Age) VALUES " + str
+        
+        try: 
+            # #Checks if entry is a alter/insert command, else throws exception
+            # if input.get().lower().find('alter') == -1 and input.get().lower().find('insert'):
+            #     raise ValueError
 
-    try: 
-        #Checks if entry is a alter/insert command, else throws exception
-        if input.get().lower().find('alter') == -1 and input.get().lower().find('insert'):
-            raise ValueError
-
-        #Attempts to carry out input command, otherwise throw exception
-        cursor.execute(sql_alter)
-        connection.commit()
-        result.insert(END, 'Table Altered')
-    except ValueError:
-        result.insert(END, "Please enter an alter/insert command")
-    except:
-        result.insert(END, "Alter command is incorrect or this table does not exist")
-    result.config(state = DISABLED)
+            #Attempts to carry out input command, otherwise throw exception
+            cursor.execute(sql_alter)
+            connection.commit()
+            result2.insert(END, 'Inserted Complete for value: ' + str + ", ")
+        except:
+            result2.insert(END, "There was an error with the population of the table:" + sql_alter)
+            result2.config(state = DISABLED)
+            break
+        
 
 #Creating the function for when exit_button is clicked:
 def exit_click():
@@ -157,10 +164,13 @@ def on_entry_click(event):
 
 def updateMenu ():
     tables_ddown["menu"].delete(0, "end")
+    alter_ddown["menu"].delete(0, "end")
     for string in OPTIONS:
         tables_ddown["menu"].add_command(label = string, command = tk._setit(table,string))
+        alter_ddown["menu"].add_command(label = string, command = tk._setit(targetTable,string))
     
     table.set(OPTIONS[0]) # default value
+    targetTable.set(OPTIONS[0])
         
 
 #Changes the behaviour of the [x] button to run close_window when clicked (previously, clicking [x] button made another instance open)
@@ -221,11 +231,10 @@ result1 = Text(create_page, wrap= WORD, height =0, width = 0, state = DISABLED)
 
 #Creating the GUI for alter table page
 back_button2 = Button(alter_page, text='Back', width=30, command=lambda : frameraise(mainwindow))
-alter_button = Button(alter_page, text='Alter Table/Insert',width = 30, command=alter_click) #This button's function is defined by command alter_click
+alter_button = Button(alter_page, text='Populate',width = 30, command=alter_click) #This button's function is defined by command alter_click
 result2 = Text(alter_page, wrap= WORD, height =0, width = 0, state = DISABLED)
-#table = StringVar(query_page)
-#table.set(OPTIONS[0]) # default value
-#tables_ddown = OptionMenu(query_page, table, *OPTIONS)
+targetTable = StringVar(alter_page)
+alter_ddown = OptionMenu(alter_page, targetTable, *OPTIONS)
 
 #Creating the GUI for drop table page
 back_button3 = Button(drop_page, text='Back', width=30, command=lambda : frameraise(mainwindow))
@@ -278,7 +287,7 @@ back_button1.grid(row=3, column=0, padx=5, pady=5, sticky="ns")
 #Creating the layout for alter table page
 alter_page.columnconfigure(0, weight = 1, minsize= 570)
 result2.grid(row =0, column = 0, padx = 5, pady = 5, sticky = "n")
-#tables_ddown.grid(row=1, column=0, padx=5, pady=5, sticky="n")
+alter_ddown.grid(row=1, column=0, padx=5, pady=5, sticky="n")
 alter_button.grid(row=2, column=0, padx=5, pady=5, sticky="ns")
 back_button2.grid(row=3, column=0, padx=5, pady=5, sticky="ns")
 
